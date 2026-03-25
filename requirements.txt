@@ -1,0 +1,8 @@
+flask
+flask-dance
+PyJWT
+werkzeug
+python-dotenv
+requests
+oauthlib
+requests-oauthlib

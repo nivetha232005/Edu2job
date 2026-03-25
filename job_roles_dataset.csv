@@ -1,0 +1,88 @@
+degree,specialization,cgpa,certifications,skills,job_role
+B.Tech,Computer Science,8.5,"AWS Cloud Practitioner, Python for Data Science","Python, Machine Learning, SQL, Data Analysis, Flask",Data Scientist
+B.Tech,Computer Science,7.8,"Python for Data Science","Python, SQL, Statistics, Pandas, NumPy",Data Analyst
+B.Tech,Computer Science,8.2,"AWS Solutions Architect","Java, Spring Boot, REST API, MySQL, Git",Software Developer
+B.Tech,Computer Science,7.5,"React Developer","JavaScript, React, Node.js, HTML, CSS, MongoDB",Full Stack Developer
+B.Tech,Computer Science,8.9,"TensorFlow Developer","Python, Deep Learning, TensorFlow, NLP, Computer Vision",Machine Learning Engineer
+B.Tech,Information Technology,7.9,"AWS Cloud Practitioner","Docker, Kubernetes, Jenkins, Linux, CI/CD, Git",DevOps Engineer
+B.Tech,Information Technology,8.1,"Google Cloud Professional","AWS, Azure, GCP, Terraform, Microservices",Cloud Architect
+B.Tech,Information Technology,7.2,"CEH Ethical Hacker","Cybersecurity, Linux, Networking, Python, Penetration Testing",Cybersecurity Analyst
+B.Tech,Electronics,8.0,"Embedded C","C, C++, Embedded Systems, Arduino, RTOS, IoT",Embedded Systems Engineer
+B.Tech,Electronics,7.6,"CCNA","Networking, Cisco, TCP/IP, Routing, Switching, Firewall",Network Engineer
+B.E,Computer Science,8.3,"AWS Cloud Practitioner","Python, Machine Learning, SQL, TensorFlow, Keras",Data Scientist
+B.E,Computer Science,7.7,"Java Developer","Java, C++, Spring, REST API, MySQL, OOP",Software Developer
+B.E,Electronics,8.5,"Embedded Systems","C, C++, VLSI, RTOS, Microcontroller, IoT, Embedded",Embedded Systems Engineer
+B.E,Electronics,7.4,"CCNA, CCNP","Networking, Cisco, Wireless, Firewall, TCP/IP",Network Engineer
+B.E,Mechanical,6.8,"AutoCAD","AutoCAD, MATLAB, Manufacturing, Design, CAD",Mechanical Design Engineer
+B.E,Civil,7.0,"AutoCAD Civil 3D","Civil Design, AutoCAD, Surveying, Project Management",Civil Engineer
+M.Tech,Computer Science,9.0,"Google ML, TensorFlow","Python, Deep Learning, NLP, Computer Vision, Research, PyTorch",AI/ML Researcher
+M.Tech,Computer Science,8.8,"AWS Solutions Architect","Python, ML, Cloud, Microservices, System Design",Cloud Architect
+M.Tech,Artificial Intelligence,9.2,"TensorFlow, PyTorch","Python, Deep Learning, NLP, Transformer, BERT, Research",AI/ML Researcher
+M.Tech,Artificial Intelligence,8.7,"Google ML","Python, TensorFlow, Computer Vision, GANs, Reinforcement Learning",Machine Learning Engineer
+M.Tech,Data Science,9.1,"IBM Data Science","Python, ML, Statistics, Big Data, Spark, Hadoop",Data Scientist
+M.Tech,Data Science,8.6,"Tableau, Power BI","Python, SQL, Statistics, Data Visualization, R",Data Analyst
+M.Tech,Cybersecurity,8.9,"CEH, CISSP","Cybersecurity, SOC, Penetration Testing, Firewall, Python",Cybersecurity Analyst
+M.Tech,Cloud Computing,8.5,"AWS, Azure, GCP","Cloud, Terraform, Docker, Kubernetes, DevOps",Cloud Architect
+MCA,Computer Science,8.0,"Oracle DBA","SQL, MySQL, PostgreSQL, Oracle, Database Administration",Database Administrator
+MCA,Computer Science,7.6,"Full Stack","JavaScript, React, Node.js, PHP, MySQL, HTML, CSS",Full Stack Developer
+MCA,Information Technology,7.8,"Python","Python, Django, REST API, MySQL, Git, Linux",Software Developer
+MCA,Software Engineering,8.2,"Agile Scrum Master","Java, Spring Boot, Microservices, REST, SQL, Git",Software Developer
+BCA,Computer Science,7.5,"Web Development","HTML, CSS, JavaScript, React, PHP, MySQL",Full Stack Developer
+BCA,Computer Science,7.2,"Python Basics","Python, SQL, Excel, Data Entry, Basic Analytics",Data Analyst
+BCA,Information Technology,7.0,"Networking Basics","Networking, TCP/IP, Linux, Hardware, Troubleshooting",Network Engineer
+MBA,Business Analytics,8.5,"Google Analytics, Tableau","SQL, Excel, Tableau, Power BI, Data Analysis, Statistics",Business Analyst
+MBA,Finance,8.0,"CFA Level 1","Financial Analysis, Excel, SQL, Risk Management, Forecasting",Financial Analyst
+MBA,Marketing,7.8,"Google Analytics","Marketing Analytics, Excel, SQL, CRM, Salesforce",Business Analyst
+MBA,Operations,7.9,"Six Sigma","Operations Management, Excel, Project Management, ERP, SAP",Product Manager
+MBA,Human Resources,7.5,"SHRM","HR Analytics, Excel, Recruitment, Training, HRIS",HR Analyst
+B.Sc,Computer Science,7.8,"Python, SQL","Python, SQL, Statistics, Excel, Data Analysis",Data Analyst
+B.Sc,Mathematics,8.2,"Statistics with R","R, Python, Statistics, SPSS, Data Analysis, Research",Data Scientist
+B.Sc,Physics,7.5,"MATLAB","MATLAB, Python, Research, Data Analysis, Statistics",Research Analyst
+B.Sc,Information Technology,7.6,"Web Development","HTML, CSS, JavaScript, PHP, MySQL, WordPress",Full Stack Developer
+B.Tech,Computer Science,9.1,"AWS, GCP","Python, ML, TensorFlow, Cloud, Big Data, Spark",Data Scientist
+B.Tech,Computer Science,8.7,"Docker, Kubernetes","Docker, Kubernetes, Jenkins, AWS, Terraform, CI/CD",DevOps Engineer
+B.Tech,Computer Science,8.4,"React, Node","JavaScript, React, Node.js, Express, MongoDB, REST API",Full Stack Developer
+B.Tech,Computer Science,7.3,"SQL Developer","SQL, MySQL, PostgreSQL, MongoDB, Database Design, NoSQL",Database Administrator
+B.Tech,Computer Science,8.6,"Scrum Master, PMP","Agile, Scrum, Product Roadmap, Stakeholder, Strategy, UX",Product Manager
+B.Tech,AI & ML,9.3,"TensorFlow Developer","Python, Deep Learning, NLP, Computer Vision, PyTorch, AI",Machine Learning Engineer
+B.Tech,AI & ML,9.0,"Google ML, Kaggle","Python, ML, Statistics, Feature Engineering, Scikit-learn",Data Scientist
+B.Tech,AI & ML,8.8,"Research Publications","Python, Research, Deep Learning, Transformer, BERT, NLP",AI/ML Researcher
+B.Tech,Data Science,8.9,"IBM Data Science","Python, SQL, ML, Pandas, Data Visualization, Tableau",Data Scientist
+B.Tech,Data Science,8.3,"Power BI, Tableau","SQL, Python, Power BI, Tableau, Excel, Statistics",Data Analyst
+B.Tech,Cybersecurity,8.7,"CEH, CompTIA Security+","Cybersecurity, Ethical Hacking, Python, Linux, SOC, SIEM",Cybersecurity Analyst
+B.Tech,Cloud Computing,8.4,"AWS Solutions Architect","AWS, Azure, Docker, Kubernetes, Terraform, Serverless",Cloud Architect
+B.Tech,Electronics,8.2,"IoT Specialist","IoT, Arduino, Raspberry Pi, C, C++, Embedded, RTOS",Embedded Systems Engineer
+B.Tech,Electrical,7.6,"PLC Programming","PLC, SCADA, Embedded, C, Automation, Electrical Systems",Embedded Systems Engineer
+B.E,Information Technology,7.9,"CCNA, AWS","Networking, AWS, Linux, Docker, CI/CD, Git",DevOps Engineer
+B.E,Computer Science,8.6,"Data Science","Python, R, SQL, ML, Statistics, Visualization",Data Scientist
+B.E,Computer Science,7.4,"Web Developer","HTML, CSS, JavaScript, Bootstrap, PHP, MySQL",Full Stack Developer
+M.Tech,Electronics,8.5,"VLSI Design","VLSI, FPGA, Verilog, HDML, Embedded, Signal Processing",Embedded Systems Engineer
+M.Tech,Networking,8.8,"CCIE, CCNP","Networking, Cisco, Routing, Switching, Wireless, Security",Network Engineer
+M.Tech,Information Security,9.0,"CISSP, CEH","Cybersecurity, SOC, Incident Response, Forensics, Python",Cybersecurity Analyst
+MBA,Technology Management,8.3,"PMP, Scrum","Product Management, Agile, Roadmap, Stakeholder, Analytics",Product Manager
+MBA,Data Analytics,8.7,"Tableau, Python","Python, SQL, Tableau, Statistics, Business Intelligence",Business Analyst
+B.Sc,Statistics,8.4,"R, SAS","R, SAS, Python, Statistics, Regression, Data Analysis",Data Scientist
+B.Sc,Data Science,8.1,"Python, Tableau","Python, SQL, Tableau, Data Analysis, Statistics, ML",Data Analyst
+BCA,Web Development,7.3,"React Developer","React, JavaScript, HTML, CSS, Node.js, Bootstrap",Full Stack Developer
+BCA,Database,7.6,"Oracle, MySQL","SQL, MySQL, Oracle, MongoDB, Database Design, NoSQL",Database Administrator
+B.Tech,Computer Science,7.0,"CompTIA Network+","Networking, TCP/IP, Linux, DNS, DHCP, Firewall",Network Engineer
+B.Tech,Information Technology,8.3,"AWS Developer","Python, AWS Lambda, DynamoDB, S3, Serverless, Node.js",Cloud Architect
+B.Tech,Computer Science,8.0,"Android Developer","Java, Kotlin, Android, REST API, Firebase, Mobile",Mobile App Developer
+B.Tech,Computer Science,7.8,"iOS Developer","Swift, iOS, Xcode, REST API, Firebase, Mobile",Mobile App Developer
+M.Tech,Mobile Computing,8.6,"Flutter, React Native","Flutter, Dart, React Native, Android, iOS, Firebase",Mobile App Developer
+BCA,Mobile Development,7.4,"Android Basics","Java, Android Studio, XML, SQLite, Mobile",Mobile App Developer
+B.Tech,Computer Science,8.1,"Salesforce Admin","CRM, Salesforce, SQL, Business Analysis, Requirements",Business Analyst
+MBA,Finance,8.5,"CFA, FRM","Financial Modeling, Excel, Python, Risk Analysis, Forecasting",Financial Analyst
+B.Com,Accounting,7.8,"Tally, CA Foundation","Accounting, Tally, Excel, Financial Reporting, GST, Taxation",Financial Analyst
+B.Tech,Computer Science,7.9,"SAP FICO","SAP, ERP, Business Analysis, SQL, Finance, Accounting",Business Analyst
+M.Tech,Data Engineering,9.0,"Apache Spark, Kafka","Python, Spark, Hadoop, Kafka, Airflow, SQL, Big Data",Data Engineer
+B.Tech,Computer Science,8.5,"Apache Spark","Python, Spark, Hadoop, SQL, ETL, Big Data, Hive",Data Engineer
+B.Tech,Information Technology,8.0,"AWS Glue, Redshift","SQL, ETL, AWS, Python, Data Pipeline, Redshift",Data Engineer
+MCA,Data Engineering,8.3,"Kafka, Airflow","Python, SQL, Kafka, Airflow, ETL, Data Warehouse",Data Engineer
+B.Tech,Computer Science,8.2,"Kubernetes, Terraform","Docker, Kubernetes, Terraform, AWS, CI/CD, Ansible",DevOps Engineer
+B.E,Computer Science,7.8,"Jenkins, Docker","Docker, Jenkins, Linux, Git, CI/CD, Shell Scripting",DevOps Engineer
+M.Tech,Computer Science,8.4,"Azure DevOps","Azure, DevOps, Kubernetes, Docker, Terraform, Pipeline",DevOps Engineer
+B.Tech,Computer Science,7.6,"Oracle DBA","SQL, Oracle, MySQL, PostgreSQL, Database Tuning, Backup",Database Administrator
+M.Tech,Database Systems,8.7,"Oracle, MongoDB","SQL, NoSQL, MongoDB, Oracle, Database Design, Query Optimization",Database Administrator
+B.Tech,Computer Science,8.0,"PMP Certified","Project Management, Agile, Scrum, Risk Management, Stakeholder",Product Manager
+MBA,Product Management,8.8,"Pragmatic, Aha!","Product Strategy, Roadmap, Agile, UX, Analytics, Stakeholder",Product Manager
