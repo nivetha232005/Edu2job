@@ -1,0 +1,235 @@
+{% extends "layout.html" %}
+{% block title %}Rate Your Prediction – Edu2Job{% endblock %}
+{% block extra_css %}
+<style>
+  .feedback-hero {
+    background: linear-gradient(135deg, #1E293B, #0F172A);
+    border-radius: 16px;
+    padding: 2rem 2.4rem;
+    margin-bottom: 1.8rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .feedback-hero::before {
+    content: '💬';
+    position: absolute; right: 2rem; top: 50%;
+    transform: translateY(-50%); font-size: 4.5rem; opacity: .08;
+  }
+  .feedback-hero h2 { color: #fff; margin-bottom: .3rem; }
+  .feedback-hero p  { color: rgba(255,255,255,.55); margin: 0; font-size: .88rem; }
+
+  .star-rating { display: flex; gap: .4rem; margin-bottom: 1.2rem; }
+  .star-btn {
+    font-size: 2rem; cursor: pointer; transition: transform .15s ease, filter .15s;
+    filter: grayscale(1) opacity(.4);
+    background: none; border: none; padding: 0; line-height: 1;
+  }
+  .star-btn.active, .star-btn.hovered { filter: grayscale(0) opacity(1); transform: scale(1.18); }
+  .star-label { font-size: .8rem; color: var(--text-muted); margin-top: .3rem; }
+
+  .prediction-preview {
+    background: linear-gradient(135deg, #EEF2FF, #F0FDFF);
+    border: 1px solid #C7D2FE;
+    border-radius: 12px;
+    padding: 1.1rem 1.3rem;
+    margin-bottom: 1.5rem;
+    display: flex; align-items: center; gap: 1rem;
+  }
+  .pred-role-badge {
+    background: linear-gradient(135deg, #4F46E5, #06B6D4);
+    color: white; font-weight: 800; font-size: .9rem;
+    padding: .5rem 1rem; border-radius: 8px; flex-shrink: 0;
+    text-align: center; min-width: 130px;
+  }
+  .pred-meta { font-size: .82rem; color: var(--text-muted); }
+  .pred-meta strong { color: var(--dark); display: block; font-size: .88rem; }
+
+  .feedback-form-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    padding: 1.8rem;
+    max-width: 620px;
+  }
+
+  .relevance-options { display: flex; gap: .6rem; flex-wrap: wrap; margin-bottom: 1.2rem; }
+  .relevance-chip {
+    border: 2px solid var(--border);
+    border-radius: 99px;
+    padding: .35rem .9rem;
+    font-size: .82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .15s;
+    background: #fff;
+    color: var(--text);
+  }
+  .relevance-chip:hover { border-color: #4F46E5; color: #4F46E5; }
+  .relevance-chip.selected { border-color: #4F46E5; background: #EEF2FF; color: #4F46E5; }
+
+  .past-feedback-item {
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: .85rem 1rem; margin-bottom: .65rem; background: #fff;
+  }
+  .past-feedback-item:last-child { margin-bottom: 0; }
+  .pf-header { display: flex; align-items: center; gap: .6rem; margin-bottom: .3rem; }
+  .pf-role { font-weight: 700; font-size: .85rem; }
+  .pf-stars { color: #F59E0B; font-size: .85rem; margin-left: auto; }
+  .pf-date { font-size: .73rem; color: var(--text-muted); }
+  .pf-comment { font-size: .8rem; color: var(--text-muted); font-style: italic; margin-top: .3rem; padding-left: .5rem; border-left: 2px solid #E2E8F0; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="feedback-hero">
+  <h2>💬 Rate Your Prediction</h2>
+  <p>Help us improve by rating how relevant your job role suggestions were.</p>
+</div>
+
+<div style="display:grid;grid-template-columns:3fr 2fr;gap:1.5rem;align-items:start;">
+
+  <!-- Feedback Form -->
+  <div>
+    {% if prediction %}
+    <div class="prediction-preview">
+      <div class="pred-role-badge">{{ prediction.predicted_roles[0] if prediction.predicted_roles else 'N/A' }}</div>
+      <div>
+        <div class="pred-meta">
+          <strong>{{ prediction.input_summary }}</strong>
+          {{ prediction.created_at[:10] }}
+        </div>
+        {% if prediction.predicted_roles and prediction.predicted_roles|length > 1 %}
+        <div style="margin-top:.4rem;display:flex;flex-wrap:wrap;gap:.3rem;">
+          {% for role in prediction.predicted_roles[1:] %}
+          <span class="badge badge-secondary" style="font-size:.72rem;">{{ role }}</span>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="feedback-form-card">
+      <form method="POST" action="{{ url_for('submit_feedback') }}" id="feedbackForm">
+        <input type="hidden" name="prediction_id" value="{{ prediction.id if prediction else '' }}">
+        <input type="hidden" name="predicted_role" value="{{ prediction.predicted_roles[0] if prediction and prediction.predicted_roles else '' }}">
+        <input type="hidden" name="rating" id="ratingInput" value="0" required>
+
+        <div style="margin-bottom:1.2rem;">
+          <label class="form-label" style="font-weight:700;font-size:.9rem;">Overall Rating</label>
+          <div class="star-rating" id="starRating">
+            {% for i in range(1,6) %}
+            <button type="button" class="star-btn" data-val="{{ i }}" title="{{ i }} star{% if i > 1 %}s{% endif %}">⭐</button>
+            {% endfor %}
+          </div>
+          <div class="star-label" id="starLabel">Click to rate</div>
+        </div>
+
+        <div style="margin-bottom:1.2rem;">
+          <label class="form-label" style="font-weight:700;font-size:.9rem;">Was the suggestion relevant?</label>
+          <div class="relevance-options">
+            <span class="relevance-chip" data-val="very_relevant">✅ Very Relevant</span>
+            <span class="relevance-chip" data-val="somewhat">🤔 Somewhat</span>
+            <span class="relevance-chip" data-val="not_relevant">❌ Not Relevant</span>
+            <span class="relevance-chip" data-val="surprised">😮 Surprised me</span>
+          </div>
+          <input type="hidden" name="relevance" id="relevanceInput" value="">
+        </div>
+
+        <div style="margin-bottom:1.5rem;">
+          <label class="form-label" for="comment" style="font-weight:700;font-size:.9rem;">
+            Additional Comments <span style="color:var(--text-muted);font-weight:400;">(optional)</span>
+          </label>
+          <textarea class="form-control" id="comment" name="comment" rows="3"
+            placeholder="What did you think of the prediction? Any roles you expected? Feedback helps us improve…"></textarea>
+        </div>
+
+        <div style="display:flex;gap:.8rem;">
+          <button type="submit" class="btn btn-primary" id="submitFeedback" disabled>
+            💬 Submit Feedback
+          </button>
+          <a href="{{ url_for('history') }}" class="btn btn-outline">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Past Feedback -->
+  <div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">📋 Your Past Feedback</span>
+      </div>
+      <div class="card-body" style="padding-top:.5rem;">
+        {% if past_feedback %}
+          {% for fb in past_feedback %}
+          <div class="past-feedback-item">
+            <div class="pf-header">
+              <span class="pf-role">{{ fb.predicted_role or '—' }}</span>
+              <span class="pf-stars">{{ '★' * fb.rating }}{{ '☆' * (5 - fb.rating) }}</span>
+            </div>
+            <div class="pf-date">{{ fb.created_at[:10] }}</div>
+            {% if fb.comment %}<div class="pf-comment">{{ fb.comment }}</div>{% endif %}
+          </div>
+          {% endfor %}
+        {% else %}
+        <div class="empty-state" style="padding:1.5rem 0;">
+          <div class="empty-icon">💬</div>
+          <p style="font-size:.85rem;">No feedback submitted yet.</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Star rating
+const stars = document.querySelectorAll('.star-btn');
+const ratingInput = document.getElementById('ratingInput');
+const starLabel = document.getElementById('starLabel');
+const submitBtn = document.getElementById('submitFeedback');
+const labels = ['', 'Poor – Not helpful at all', 'Fair – Slightly relevant', 'Good – Mostly accurate', 'Great – Very relevant', 'Excellent – Spot on! 🎯'];
+
+let currentRating = 0;
+
+stars.forEach(star => {
+  star.addEventListener('mouseenter', () => {
+    const val = parseInt(star.dataset.val);
+    stars.forEach(s => {
+      const sv = parseInt(s.dataset.val);
+      s.classList.toggle('hovered', sv <= val);
+    });
+    starLabel.textContent = labels[val];
+  });
+  star.addEventListener('mouseleave', () => {
+    stars.forEach(s => s.classList.remove('hovered'));
+    starLabel.textContent = currentRating ? labels[currentRating] : 'Click to rate';
+  });
+  star.addEventListener('click', () => {
+    currentRating = parseInt(star.dataset.val);
+    ratingInput.value = currentRating;
+    stars.forEach(s => s.classList.toggle('active', parseInt(s.dataset.val) <= currentRating));
+    starLabel.textContent = labels[currentRating];
+    checkFormValid();
+  });
+});
+
+// Relevance chips
+document.querySelectorAll('.relevance-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.relevance-chip').forEach(c => c.classList.remove('selected'));
+    chip.classList.add('selected');
+    document.getElementById('relevanceInput').value = chip.dataset.val;
+  });
+});
+
+function checkFormValid() {
+  submitBtn.disabled = (currentRating === 0);
+}
+</script>
+{% endblock %}

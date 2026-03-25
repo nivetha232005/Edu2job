@@ -1,0 +1,196 @@
+{% extends "layout.html" %}
+{% block title %}Dashboard – Edu2Job{% endblock %}
+{% block content %}
+
+<!-- Welcome Banner -->
+<div class="welcome-banner">
+  <div>
+    <h2>Hello, {{ session.get('user_name','').split()[0] }}! 👋</h2>
+    <p>Track your career predictions and manage your academic profile here.</p>
+  </div>
+  <div class="welcome-art">🎯</div>
+</div>
+
+<!-- Stats -->
+<div class="stat-grid">
+  <div class="stat-card">
+    <div class="stat-icon blue">📋</div>
+    <div>
+      <div class="stat-value" data-target="{{ history|length if history else 0 }}">0</div>
+      <div class="stat-label">Total Predictions</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon green">🎓</div>
+    <div>
+      <div class="stat-value" data-target="{{ 1 if edu else 0 }}">0</div>
+      <div class="stat-label">Education Profiles</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon amber">⭐</div>
+    <div>
+      <div class="stat-value">{{ '%.1f'|format(edu.cgpa) if edu and edu.cgpa else '—' }}</div>
+      <div class="stat-label">Your CGPA</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon indigo">🔐</div>
+    <div>
+      <div class="stat-value" style="font-size:1rem;">{{ session.get('role','user')|upper }}</div>
+      <div class="stat-label">Account Role</div>
+    </div>
+  </div>
+</div>
+
+<!-- Middle row: Education + JWT -->
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+
+  <!-- Education Summary -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">🎓 Education Profile</span>
+      <a href="{{ url_for('profile') }}" class="btn btn-outline btn-sm">Edit</a>
+    </div>
+    <div class="card-body">
+      {% if edu %}
+      <div style="display:flex;flex-direction:column;gap:.7rem;">
+        <div style="display:flex;justify-content:space-between;">
+          <span style="color:var(--text-muted);font-size:.85rem;">Degree</span>
+          <span style="font-weight:600;">{{ edu.degree or '—' }}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;">
+          <span style="color:var(--text-muted);font-size:.85rem;">Specialization</span>
+          <span style="font-weight:600;">{{ edu.specialization or '—' }}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;">
+          <span style="color:var(--text-muted);font-size:.85rem;">Institution</span>
+          <span style="font-weight:600;">{{ edu.institution or '—' }}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;">
+          <span style="color:var(--text-muted);font-size:.85rem;">Year</span>
+          <span style="font-weight:600;">{{ edu.year_of_passing or '—' }}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;">
+          <span style="color:var(--text-muted);font-size:.85rem;">CGPA</span>
+          <span style="font-weight:600;">{{ edu.cgpa or '—' }} / 10</span>
+        </div>
+        {% if edu.skills %}
+        <div>
+          <div style="font-size:.78rem;color:var(--text-muted);margin-bottom:.3rem;">Skills</div>
+          <div style="display:flex;flex-wrap:wrap;gap:.35rem;">
+            {% for skill in edu.skills.split(',') %}
+            <span class="badge badge-primary">{{ skill.strip() }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <div class="empty-icon">🎓</div>
+        <p>No education data yet.</p>
+        <a href="{{ url_for('profile') }}" class="btn btn-primary btn-sm">Add Now →</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- JWT Token + Quick Actions -->
+  <div style="display:flex;flex-direction:column;gap:1rem;">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">🔐 JWT Session Token</span>
+        <button id="copy-token" class="btn btn-secondary btn-sm">📋 Copy</button>
+      </div>
+      <div class="card-body">
+        <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:.6rem;">
+          Your session is secured with a JSON Web Token.
+          <span class="badge badge-success">Active</span>
+        </p>
+        <div class="token-box">{{ session.get('jwt_token', 'No token in session') }}</div>
+        <div style="margin-top:.8rem;display:flex;gap:1.2rem;font-size:.8rem;color:var(--text-muted);">
+          <span>Algorithm: <strong style="color:var(--dark);">HS256</strong></span>
+          <span>Expires: <strong style="color:var(--dark);">7 days</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><span class="card-title">⚡ Quick Actions</span></div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:.6rem;">
+        <a href="{{ url_for('predict') }}" class="btn btn-primary btn-block">🔮 &nbsp;Predict My Job Role</a>
+        <a href="{{ url_for('profile') }}" class="btn btn-outline btn-block">⚙️ &nbsp;Edit Profile & Education</a>
+        <a href="{{ url_for('seed_demo') }}" class="btn btn-secondary btn-block">🧪 &nbsp;Load Demo Data</a>
+        <a href="{{ url_for('history') }}" class="btn btn-secondary btn-block">📋 &nbsp;View Full History</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Recent Prediction History -->
+<div class="card" style="margin-top:1.5rem;">
+  <div class="card-header">
+    <span class="card-title">📋 Recent Predictions</span>
+    <a href="{{ url_for('history') }}" class="btn btn-outline btn-sm">View All</a>
+  </div>
+  <div class="card-body">
+    {% if history %}
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Input Summary</th>
+            <th>Top Predicted Role</th>
+            <th>Confidence</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for h in history %}
+          <tr>
+            <td><span class="text-muted">{{ loop.index }}</span></td>
+
+            <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+              {{ h.input_summary }}
+            </td>
+
+            <td>
+              {% if h.predicted_roles %}
+                <span class="badge badge-primary">{{ h.predicted_roles[0] }}</span>
+              {% else %}
+                <span class="text-muted">—</span>
+              {% endif %}
+            </td>
+
+            <td>
+              {% if h.confidence_scores %}
+                <div style="display:flex;align-items:center;gap:.5rem;">
+                  <div class="progress" style="width:80px;">
+                    <div class="progress-bar" style="width:{{ h.confidence_scores[0] }}%;"></div>
+                  </div>
+                  <span class="small">{{ h.confidence_scores[0] }}%</span>
+                </div>
+              {% else %}
+                <span class="text-muted">—</span>
+              {% endif %}
+            </td>
+
+            <td class="small text-muted">{{ h.created_at[:16] }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">📊</div>
+      <p>No predictions yet. <a href="{{ url_for('seed_demo') }}">Load demo data</a> to see how it works.</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

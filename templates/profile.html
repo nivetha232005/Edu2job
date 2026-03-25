@@ -1,0 +1,239 @@
+{% extends "layout.html" %}
+{% block title %}My Profile – EDU2JOB{% endblock %}
+{% block content %}
+
+<div style="margin-bottom:1.5rem;">
+  <h2 style="margin-bottom:.3rem;">👤 My Profile</h2>
+  <p style="color:var(--text-muted);">Manage your personal information and academic history.</p>
+</div>
+
+<!-- Profile header card -->
+<div class="card" style="margin-bottom:1.5rem;">
+  <div class="card-body">
+    <div class="profile-avatar-wrap">
+      <div class="profile-avatar">{{ session.get('user_name','U')[0].upper() }}</div>
+      <div class="profile-info">
+        <div class="name">{{ user.full_name }}</div>
+        <div class="email">{{ user.email }}</div>
+        <div class="role-badge">
+          {% if user.role == 'admin' %}
+          <span class="badge badge-danger">🛡️ Admin</span>
+          {% else %}
+          <span class="badge badge-primary">👤 User</span>
+          {% endif %}
+          <span class="badge badge-success">✅ Active</span>
+          <span style="font-size:.75rem;color:var(--text-muted);">Joined {{ user.created_at[:10] }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tabs -->
+<div class="tab-container">
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="tab-personal">📋 Personal Info</button>
+    <button class="tab-btn" data-tab="tab-education">🎓 Education</button>
+    <button class="tab-btn" data-tab="tab-security">🔒 Security</button>
+    <button class="tab-btn" data-tab="tab-jwt">🔐 JWT Token</button>
+  </div>
+
+  <!-- Personal Info Tab -->
+  <div class="tab-panel active" id="tab-personal">
+    <div class="card">
+      <div class="card-header"><span class="card-title">Personal Information</span></div>
+      <div class="card-body">
+        <form method="POST" action="{{ url_for('profile') }}">
+          <input type="hidden" name="action" value="update_personal"/>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Full Name</label>
+              <input type="text" class="form-control" name="full_name"
+                     value="{{ user.full_name }}" required/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email Address</label>
+              <input type="email" class="form-control" value="{{ user.email }}" disabled
+                     style="background:var(--surface);cursor:not-allowed;"/>
+              <span class="form-text">Email cannot be changed.</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Account Role</label>
+            <input type="text" class="form-control" value="{{ user.role | capitalize }}" disabled
+                   style="background:var(--surface);cursor:not-allowed;"/>
+          </div>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Education Tab -->
+  <div class="tab-panel" id="tab-education">
+    <div class="card">
+      <div class="card-header"><span class="card-title">🎓 Academic Background</span></div>
+      <div class="card-body">
+        <form method="POST" action="{{ url_for('profile') }}">
+          <input type="hidden" name="action" value="update_education"/>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Highest Degree</label>
+              <select class="form-select" name="degree">
+                <option value="">-- Select --</option>
+                {% for deg in ['B.Tech','B.E.','B.Sc','B.Com','BCA','M.Tech','M.E.','M.Sc','MCA','MBA','Ph.D','Diploma','Other'] %}
+                <option value="{{ deg }}" {% if edu and edu.degree == deg %}selected{% endif %}>{{ deg }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Specialization / Branch</label>
+              <input type="text" class="form-control" name="specialization"
+                     value="{{ edu.specialization if edu else '' }}"
+                     placeholder="e.g. Computer Science, Electronics"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Institution Name</label>
+            <input type="text" class="form-control" name="institution"
+                   value="{{ edu.institution if edu else '' }}"
+                   placeholder="e.g. Anna University, IIT Madras"/>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Year of Passing</label>
+              <input type="number" class="form-control" name="year_of_passing"
+                     value="{{ edu.year_of_passing if edu else '' }}"
+                     placeholder="2024" min="1990" max="2035"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">
+                CGPA / Percentage
+                <span id="cgpa-display" style="float:right;color:var(--primary);font-weight:700;">
+                  {{ '%.1f'|format(edu.cgpa) if edu and edu.cgpa else '8.0' }}
+                </span>
+              </label>
+              <input type="range" class="form-control" id="cgpa" name="cgpa"
+                     min="1" max="10" step="0.1"
+                     value="{{ edu.cgpa if edu and edu.cgpa else '8.0' }}"
+                     style="padding:0;height:36px;cursor:pointer;"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Certifications</label>
+            <input type="text" class="form-control" name="certifications"
+                   value="{{ edu.certifications if edu else '' }}"
+                   placeholder="e.g. AWS Certified, Google Data Analytics, Coursera ML"/>
+            <span class="form-text">Separate multiple certifications with commas.</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Technical Skills</label>
+            <textarea class="form-control" name="skills" rows="3"
+                      placeholder="e.g. Python, Machine Learning, SQL, React, Data Analysis">{{ edu.skills if edu else '' }}</textarea>
+            <span class="form-text">Separate skills with commas — used by the ML model for predictions.</span>
+          </div>
+          <button type="submit" class="btn btn-primary">💾 Save Education Profile</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Security Tab -->
+  <div class="tab-panel" id="tab-security">
+    <div class="card">
+      <div class="card-header"><span class="card-title">🔒 Change Password</span></div>
+      <div class="card-body">
+        <form method="POST" action="{{ url_for('profile') }}" style="max-width:440px;">
+          <input type="hidden" name="action" value="update_password"/>
+          <div class="form-group">
+            <label class="form-label">Current Password</label>
+            <div class="input-icon-wrap" style="position:relative;">
+              <span class="icon">🔑</span>
+              <input type="password" class="form-control" name="current_password"
+                     placeholder="Enter current password" required style="padding-right:2.4rem;"/>
+              <span class="password-toggle" style="right:.8rem;">👁️</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">New Password</label>
+            <div class="input-icon-wrap" style="position:relative;">
+              <span class="icon">🔒</span>
+              <input type="password" class="form-control" id="password" name="new_password"
+                     placeholder="Min. 8 characters" required style="padding-right:2.4rem;"/>
+              <span class="password-toggle" style="right:.8rem;">👁️</span>
+            </div>
+            <div class="progress" style="margin-top:.5rem;">
+              <div class="progress-bar" id="pw-strength-bar" style="width:0%;"></div>
+            </div>
+            <span class="form-text" id="pw-strength-text">&nbsp;</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Confirm New Password</label>
+            <div class="input-icon-wrap" style="position:relative;">
+              <span class="icon">🔒</span>
+              <input type="password" class="form-control" name="confirm_new_password"
+                     placeholder="Repeat new password" required style="padding-right:2.4rem;"/>
+              <span class="password-toggle" style="right:.8rem;">👁️</span>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Update Password</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- JWT Token Tab -->
+  <div class="tab-panel" id="tab-jwt">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">🔐 JWT Authentication Token</span>
+        <button id="copy-token" class="btn btn-secondary btn-sm">📋 Copy Token</button>
+      </div>
+      <div class="card-body">
+        <div style="background:var(--primary-light);border-radius:var(--radius-sm);padding:1rem;margin-bottom:1.2rem;">
+          <strong>What is this?</strong>
+          <p style="font-size:.85rem;color:var(--text-muted);margin-top:.3rem;margin-bottom:0;">
+            Your session is authenticated using a JSON Web Token (JWT). It is signed with HS256 and expires in 7 days.
+            Use this token in API requests as: <code>Authorization: Bearer &lt;token&gt;</code>
+          </p>
+        </div>
+        <div class="token-box">{{ session.get('jwt_token', 'Token not available') }}</div>
+        <div style="display:flex;gap:2rem;margin-top:1rem;font-size:.82rem;">
+          <div><span class="text-muted">Algorithm</span><br><strong>HS256</strong></div>
+          <div><span class="text-muted">Type</span><br><strong>Bearer</strong></div>
+          <div><span class="text-muted">Expiry</span><br><strong>7 days</strong></div>
+          <div><span class="text-muted">Status</span><br><span class="badge badge-success">Active</span></div>
+        </div>
+
+        <div class="form-divider"></div>
+        <h4 style="margin-bottom:.8rem;">🧪 Verify Token via API</h4>
+        <button class="btn btn-outline btn-sm" onclick="verifyToken()">Test /api/verify-token</button>
+        <div id="verify-result" style="margin-top:.8rem;font-size:.85rem;"></div>
+      </div>
+    </div>
+  </div>
+</div><!-- end tab-container -->
+
+<script>
+async function verifyToken() {
+  const token = '{{ session.get("jwt_token","") }}';
+  const result = document.getElementById('verify-result');
+  result.textContent = '⏳ Verifying...';
+  try {
+    const res = await fetch('/api/verify-token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token })
+    });
+    const data = await res.json();
+    if (data.valid) {
+      result.innerHTML = `<span style="color:var(--success)">✅ Token is valid — User ID: ${data.user_id}, Role: ${data.role}</span>`;
+    } else {
+      result.innerHTML = `<span style="color:var(--danger)">❌ Token is invalid or expired</span>`;
+    }
+  } catch(e) {
+    result.innerHTML = `<span style="color:var(--danger)">❌ Request failed</span>`;
+  }
+}
+</script>
+{% endblock %}

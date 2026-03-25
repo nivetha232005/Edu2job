@@ -1,0 +1,116 @@
+{% extends "layout.html" %}
+{% block title %}Prediction History – EDU2JOB{% endblock %}
+{% block content %}
+
+<div style="margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;">
+  <div>
+    <h2 style="margin-bottom:.3rem;">📋 Prediction History</h2>
+    <p style="color:var(--text-muted);">All your past job role predictions with confidence scores.</p>
+  </div>
+  <a href="{{ url_for('seed_demo') }}" class="btn btn-outline btn-sm">🧪 Add Demo Entry</a>
+</div>
+
+{% if records %}
+<div class="card">
+  <div class="card-header">
+    <span class="card-title">{{ records|length }} Prediction{{ 's' if records|length != 1 }}</span>
+    <span class="badge badge-primary">{{ records|length }} total</span>
+  </div>
+  <div class="card-body" style="padding:0;">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Input Summary</th>
+            <th>Top Job Roles</th>
+            <th>Confidence Scores</th>
+            <th>Date & Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for rec in records %}
+          <tr>
+            <td style="color:var(--text-muted);">{{ loop.index }}</td>
+            <td style="max-width:180px;">
+              <div style="font-size:.85rem;line-height:1.4;">{{ rec.input_summary }}</div>
+            </td>
+            <td>
+              {% if rec.predicted_roles %}
+              <div style="display:flex;flex-direction:column;gap:.25rem;">
+                {% set raw = rec.predicted_roles | replace('[','') | replace(']','') | replace('"','') %}
+                {% for role in raw.split(',')[:3] %}
+                <span class="badge badge-primary" style="width:fit-content;">{{ role.strip() }}</span>
+                {% endfor %}
+              </div>
+              {% else %}—{% endif %}
+            </td>
+            <td>
+              {% if rec.confidence_scores %}
+              {% set scores_raw = rec.confidence_scores | replace('[','') | replace(']','') %}
+              <div style="display:flex;flex-direction:column;gap:.3rem;">
+                {% for score_str in scores_raw.split(',')[:3] %}
+                {% set score = score_str.strip() | int %}
+                <div style="display:flex;align-items:center;gap:.5rem;">
+                  <div class="progress" style="width:70px;">
+                    <div class="progress-bar" style="width:{{ score }}%;"></div>
+                  </div>
+                  <span style="font-size:.78rem;font-weight:600;color:var(--dark);">{{ score }}%</span>
+                </div>
+                {% endfor %}
+              </div>
+              {% else %}—{% endif %}
+            </td>
+            <td>
+              <div style="font-size:.82rem;">{{ rec.created_at[:10] }}</div>
+              <div style="font-size:.75rem;color:var(--text-muted);">{{ rec.created_at[11:16] }}</div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Timeline view -->
+<div class="card" style="margin-top:1.5rem;">
+  <div class="card-header"><span class="card-title">📅 Timeline View</span></div>
+  <div class="card-body">
+    <ul class="timeline">
+      {% for rec in records %}
+      <li class="timeline-item">
+        <div class="timeline-date">{{ rec.created_at[:16] }}</div>
+        <div class="timeline-title">{{ rec.input_summary }}</div>
+        <div class="timeline-body">
+          {% if rec.predicted_roles %}
+          {% set raw = rec.predicted_roles | replace('[','') | replace(']','') | replace('"','') %}
+          Top roles: {{ raw.split(',')[:3] | join(', ') }}
+          {% endif %}
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+
+{% else %}
+<div class="card">
+  <div class="card-body">
+    <div class="empty-state">
+      <div class="empty-icon">📊</div>
+      <h3 style="margin-bottom:.5rem;">No predictions yet</h3>
+      <p style="color:var(--text-muted);">
+        Complete your education profile and run a prediction to see results here.<br>
+        You can also load demo data to preview how history looks.
+      </p>
+      <div style="display:flex;gap:.8rem;justify-content:center;margin-top:1rem;">
+        <a href="{{ url_for('profile') }}" class="btn btn-primary">🎓 Complete Profile</a>
+        <a href="{{ url_for('seed_demo') }}" class="btn btn-secondary">🧪 Load Demo Data</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}

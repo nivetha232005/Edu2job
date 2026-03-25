@@ -1,0 +1,388 @@
+{% extends "layout.html" %}
+{% block title %}Admin Dashboard – Edu2Job{% endblock %}
+{% block extra_css %}
+<style>
+  .admin-hero {
+    background: linear-gradient(135deg, #1E293B 0%, #312E81 100%);
+    border-radius: 16px;
+    padding: 1.8rem 2.2rem;
+    margin-bottom: 1.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+  .admin-hero::after {
+    content: '🛡️';
+    position: absolute; right: 2rem; top: 50%;
+    transform: translateY(-50%);
+    font-size: 5rem; opacity: .08;
+  }
+  .admin-hero h2 { color: #fff; margin-bottom: .3rem; }
+  .admin-hero p  { color: rgba(255,255,255,.6); font-size: .88rem; margin: 0; }
+
+  .upload-zone {
+    border: 2px dashed #C7D2FE;
+    border-radius: 12px;
+    background: #EEF2FF;
+    padding: 2.2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all .2s ease;
+  }
+  .upload-zone:hover, .upload-zone.dragover { border-color: #4F46E5; background: #E0E7FF; }
+  .upload-icon { font-size: 2.2rem; margin-bottom: .5rem; }
+  .upload-title { font-weight: 700; font-size: .93rem; color: #3730A3; }
+  .upload-hint  { font-size: .78rem; color: #6366F1; margin-top: .25rem; }
+
+  .model-status-bar {
+    display: flex; align-items: center; gap: 1.5rem;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 1rem 1.2rem;
+    margin-bottom: 1.2rem; flex-wrap: wrap;
+  }
+  .model-stat-val { font-weight: 800; font-size: 1.1rem; color: var(--dark); }
+  .model-stat-lbl { font-size: .72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: .04em; }
+
+  .retrain-btn {
+    background: linear-gradient(135deg, #4F46E5, #06B6D4);
+    color: #fff; border: none; border-radius: 8px;
+    padding: .6rem 1.4rem; font-weight: 700; font-size: .88rem;
+    cursor: pointer; transition: opacity .2s;
+    display: inline-flex; align-items: center; gap: .5rem;
+  }
+  .retrain-btn:hover { opacity: .88; }
+  .retrain-btn:disabled { opacity: .45; cursor: not-allowed; }
+
+  .users-table { width: 100%; border-collapse: collapse; font-size: .84rem; }
+  .users-table th {
+    padding: .55rem .9rem; text-align: left;
+    font-weight: 600; font-size: .73rem; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: .04em;
+    background: var(--surface); border-bottom: 1px solid var(--border);
+  }
+  .users-table td { padding: .65rem .9rem; border-bottom: 1px solid #F1F5F9; vertical-align: middle; }
+  .users-table tr:last-child td { border-bottom: none; }
+  .users-table tr:hover td { background: #FAFBFF; }
+
+  .feedback-item {
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: .9rem 1.1rem; margin-bottom: .7rem; background: #fff;
+    transition: box-shadow .15s;
+  }
+  .feedback-item:hover { box-shadow: 0 2px 12px rgba(0,0,0,.06); }
+  .feedback-item:last-child { margin-bottom: 0; }
+  .feedback-header { display: flex; align-items: center; gap: .6rem; margin-bottom: .4rem; }
+  .feedback-user { font-weight: 700; font-size: .85rem; }
+  .feedback-date { font-size: .73rem; color: var(--text-muted); margin-left: auto; }
+  .stars { color: #F59E0B; font-size: .88rem; }
+  .feedback-comment {
+    font-size: .82rem; color: var(--text); font-style: italic;
+    margin-top: .4rem; padding: .45rem .8rem;
+    background: #F8FAFC; border-radius: 6px; border-left: 3px solid #C7D2FE;
+  }
+
+  .ring-wrap { position: relative; width: 60px; height: 60px; flex-shrink: 0; }
+  .ring-wrap svg { transform: rotate(-90deg); }
+  .ring-bg { fill: none; stroke: #EEF2FF; stroke-width: 6; }
+  .ring-fg { fill: none; stroke: #4F46E5; stroke-width: 6; stroke-linecap: round; }
+  .ring-label { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: .78rem; color: #4F46E5; }
+
+  .log-console { background: #0F172A; border-radius: 10px; padding: 1rem 1.2rem; max-height: 190px; overflow-y: auto; margin-top: .8rem; }
+  .log-line { font-family: 'Courier New', monospace; font-size: .77rem; padding: .2rem 0; color: #94A3B8; border-bottom: 1px solid #1E293B; }
+  .log-line.ok    { color: #34D399; }
+  .log-line.warn  { color: #FCD34D; }
+
+  .progress-bar-anim { height: 6px; border-radius: 99px; background: #EEF2FF; overflow: hidden; margin-top: .6rem; }
+  .progress-bar-anim .fill { height: 100%; width: 0%; border-radius: 99px; background: linear-gradient(90deg, #4F46E5, #06B6D4); transition: width .4s ease; }
+
+  #retrain-section { display: none; }
+  .search-bar { width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: .5rem .9rem; font-size: .85rem; outline: none; margin-bottom: 1rem; }
+  .search-bar:focus { border-color: #4F46E5; box-shadow: 0 0 0 3px rgba(79,70,229,.1); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-hero">
+  <div>
+    <h2>🛡️ Admin Control Panel</h2>
+    <p>Dataset management · Model retraining · User controls · Feedback monitoring</p>
+  </div>
+  <span class="badge badge-danger" style="font-size:.85rem;padding:.45rem 1rem;">Admin Access</span>
+</div>
+
+<div class="stat-grid" style="margin-bottom:1.8rem;">
+  <div class="stat-card">
+    <div class="stat-icon blue">👥</div>
+    <div><div class="stat-value" data-target="{{ total_users }}">0</div><div class="stat-label">Registered Users</div></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon green">🔮</div>
+    <div><div class="stat-value" data-target="{{ total_preds }}">0</div><div class="stat-label">Total Predictions</div></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon amber">⭐</div>
+    <div><div class="stat-value">{{ avg_feedback_score }}/5</div><div class="stat-label">Avg. Feedback Score</div></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon indigo">💬</div>
+    <div><div class="stat-value" data-target="{{ total_feedback }}">0</div><div class="stat-label">Feedback Submitted</div></div>
+  </div>
+</div>
+
+<div class="tab-container">
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="tab-users">👥 Users</button>
+    <button class="tab-btn" data-tab="tab-model">🤖 Model</button>
+    <button class="tab-btn" data-tab="tab-feedback">💬 Feedback</button>
+    <button class="tab-btn" data-tab="tab-logs">📋 Logs</button>
+  </div>
+
+  <!-- USERS -->
+  <div class="tab-panel active" id="tab-users">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">All Registered Users</span>
+        <span class="badge badge-primary">{{ users|length }} total</span>
+      </div>
+      <div class="card-body" style="padding-bottom:.5rem;">
+        <input type="text" class="search-bar" id="userSearch" placeholder="🔍  Search by name or email…">
+      </div>
+      <div class="table-wrap">
+        <table class="users-table" id="usersTable">
+          <thead><tr><th>ID</th><th>User</th><th>Email</th><th>Role</th><th>Auth</th><th>Joined</th><th>Actions</th></tr></thead>
+          <tbody>
+            {% for u in users %}
+            <tr data-name="{{ u.full_name|lower }}" data-email="{{ u.email|lower }}">
+              <td class="text-muted" style="font-size:.77rem;">#{{ u.id }}</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:.55rem;">
+                  <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:.72rem;font-weight:700;flex-shrink:0;">{{ u.full_name[0].upper() }}</div>
+                  <span style="font-weight:600;font-size:.84rem;">{{ u.full_name }}</span>
+                </div>
+              </td>
+              <td style="font-size:.81rem;">{{ u.email }}</td>
+              <td>{% if u.role=='admin' %}<span class="badge badge-danger">🛡️ Admin</span>{% else %}<span class="badge badge-primary">👤 User</span>{% endif %}</td>
+              <td>{% if u.google_id %}<span class="badge badge-secondary">🔵 Google</span>{% else %}<span class="badge badge-secondary">🔑 Email</span>{% endif %}</td>
+              <td style="font-size:.77rem;color:var(--text-muted);">{{ u.created_at[:10] }}</td>
+              <td style="display:flex;gap:.4rem;align-items:center;">
+                {% if u.role != 'admin' %}
+                <form method="POST" action="{{ url_for('admin_toggle_role', user_id=u.id) }}" style="display:inline;">
+                  <button type="submit" class="btn btn-outline btn-sm" style="font-size:.73rem;padding:.22rem .55rem;" onclick="return confirm('Promote {{ u.full_name }} to admin?')">Promote</button>
+                </form>
+                {% else %}<span style="font-size:.73rem;color:var(--text-muted);">—</span>{% endif %}
+                <form method="POST" action="{{ url_for('admin_delete_user', user_id=u.id) }}" style="display:inline;">
+                  <button type="submit" style="background:#FEE2E2;color:#991B1B;border:none;border-radius:6px;padding:.22rem .55rem;font-size:.73rem;cursor:pointer;" onclick="return confirm('Delete {{ u.full_name }}? This cannot be undone.')">🗑️</button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODEL -->
+  <div class="tab-panel" id="tab-model">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+      <div class="card">
+        <div class="card-header"><span class="card-title">📤 Upload Training Dataset</span></div>
+        <div class="card-body">
+          <form method="POST" action="{{ url_for('admin_upload_dataset') }}" enctype="multipart/form-data" id="uploadForm">
+            <div class="upload-zone" id="dropZone" onclick="document.getElementById('datasetFile').click()">
+              <div class="upload-icon">☁️</div>
+              <div class="upload-title">Drop CSV here or click to browse</div>
+              <div class="upload-hint">Columns: degree, specialization, skills, cgpa, job_role</div>
+              <div id="fileNameDisplay" style="margin-top:.7rem;font-size:.8rem;color:#4F46E5;font-weight:600;display:none;"></div>
+            </div>
+            <input type="file" id="datasetFile" name="dataset" accept=".csv" style="display:none;" required>
+            <div style="margin-top:.9rem;display:flex;gap:.8rem;align-items:center;">
+              <button type="submit" class="btn btn-primary" id="uploadBtn" disabled>📤 Upload & Validate</button>
+              {% if last_dataset %}<span style="font-size:.78rem;color:var(--text-muted);">Last: <strong>{{ last_dataset }}</strong></span>{% endif %}
+            </div>
+          </form>
+          {% if upload_success %}
+          <div style="margin-top:.9rem;padding:.65rem 1rem;background:#D1FAE5;border-radius:8px;color:#065F46;font-size:.82rem;font-weight:600;">
+            ✅ Uploaded: {{ upload_filename }} ({{ upload_rows }} rows)
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-title">🤖 Model Status & Retrain</span></div>
+        <div class="card-body">
+          <div class="model-status-bar">
+            <div class="ring-wrap">
+              <svg viewBox="0 0 60 60" width="60" height="60">
+                <circle class="ring-bg" cx="30" cy="30" r="24"/>
+                <circle class="ring-fg" cx="30" cy="30" r="24"
+                  stroke-dasharray="{{ (model_accuracy or 0) * 1.508 }} 150.8"/>
+              </svg>
+              <div class="ring-label">{{ model_accuracy or '—' }}{% if model_accuracy %}%{% endif %}</div>
+            </div>
+            <div>
+              <div class="model-stat-val">{{ model_algorithm or 'Random Forest' }}</div>
+              <div class="model-stat-lbl">Algorithm</div>
+            </div>
+            <div>
+              <div class="model-stat-val">{{ model_trained_at or '—' }}</div>
+              <div class="model-stat-lbl">Last Trained</div>
+            </div>
+          </div>
+          <button class="retrain-btn" id="retrainBtn" onclick="startRetrain()">🔄 Trigger Retraining</button>
+          <div id="retrain-section">
+            <div style="font-size:.81rem;font-weight:600;color:var(--dark);margin-top:1rem;margin-bottom:.3rem;">Training in progress…</div>
+            <div class="progress-bar-anim"><div class="fill" id="trainFill"></div></div>
+            <div class="log-console" id="trainLog">
+              <div class="log-line ok">[00:00] Initializing pipeline…</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEEDBACK -->
+  <div class="tab-panel" id="tab-feedback">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">💬 User Feedback</span>
+        <span class="badge badge-primary">{{ feedbacks|length }} total</span>
+      </div>
+      <div class="card-body">
+        {% if feedbacks %}
+          {% for fb in feedbacks %}
+          <div class="feedback-item">
+            <div class="feedback-header">
+              <div style="width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:.7rem;font-weight:700;flex-shrink:0;">{{ fb.user_name[0].upper() if fb.user_name else '?' }}</div>
+              <span class="feedback-user">{{ fb.user_name }}</span>
+              <span class="stars">{{ '★' * fb.rating }}{{ '☆' * (5 - fb.rating) }}</span>
+              <span class="feedback-date">{{ fb.created_at[:10] }}</span>
+            </div>
+            <div style="font-size:.78rem;color:var(--text-muted);">Predicted: <strong>{{ fb.predicted_role or '—' }}</strong></div>
+            {% if fb.comment %}<div class="feedback-comment">{{ fb.comment }}</div>{% endif %}
+          </div>
+          {% endfor %}
+        {% else %}
+        <div class="empty-state"><div class="empty-icon">💬</div><p>No feedback yet.</p></div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- LOGS -->
+  <div class="tab-panel" id="tab-logs">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">📋 Recent Prediction Queries</span>
+        <span class="badge badge-primary">Last 20</span>
+      </div>
+      {% if recent_queries %}
+      <div class="table-wrap">
+        <table class="users-table">
+          <thead><tr><th>User</th><th>Input</th><th>Top Role</th><th>Confidence</th><th>Date</th></tr></thead>
+          <tbody>
+            {% for q in recent_queries %}
+            <tr>
+              <td>
+                <div style="font-weight:600;font-size:.82rem;">{{ q.full_name }}</div>
+                <div style="font-size:.72rem;color:var(--text-muted);">{{ q.email }}</div>
+              </td>
+              <td style="font-size:.79rem;max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ q.input_summary }}</td>
+              <td>
+                {% if q.predicted_roles %}
+                  {% set raw = q.predicted_roles | replace('[','') | replace(']','') | replace('"','') %}
+                  <span class="badge badge-primary">{{ raw.split(',')[0].strip() }}</span>
+                {% else %}—{% endif %}
+              </td>
+              <td>
+                {% if q.confidence_scores %}
+                  {% set scores = q.confidence_scores | replace('[','') | replace(']','') %}
+                  {% set first = scores.split(',')[0].strip() %}
+                  <div style="display:flex;align-items:center;gap:.35rem;">
+                    <div class="progress" style="width:65px;"><div class="progress-bar" style="width:{{ first }}%;"></div></div>
+                    <span class="small">{{ first }}%</span>
+                  </div>
+                {% else %}—{% endif %}
+              </td>
+              <td style="font-size:.75rem;color:var(--text-muted);">{{ q.created_at[:16] }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="card-body"><div class="empty-state"><div class="empty-icon">📋</div><p>No queries yet.</p></div></div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// User search
+document.getElementById('userSearch').addEventListener('input', function() {
+  const q = this.value.toLowerCase();
+  document.querySelectorAll('#usersTable tbody tr').forEach(r => {
+    r.style.display = (r.dataset.name.includes(q) || r.dataset.email.includes(q)) ? '' : 'none';
+  });
+});
+
+// File upload
+const fileInput = document.getElementById('datasetFile');
+const uploadBtn = document.getElementById('uploadBtn');
+const fileDisplay = document.getElementById('fileNameDisplay');
+const dropZone = document.getElementById('dropZone');
+
+fileInput.addEventListener('change', function() {
+  if (this.files[0]) {
+    fileDisplay.textContent = '📄 ' + this.files[0].name + ' (' + (this.files[0].size/1024).toFixed(1) + ' KB)';
+    fileDisplay.style.display = 'block';
+    uploadBtn.disabled = false;
+  }
+});
+['dragover','dragenter'].forEach(e => dropZone.addEventListener(e, ev => { ev.preventDefault(); dropZone.classList.add('dragover'); }));
+['dragleave','drop'].forEach(e => dropZone.addEventListener(e, ev => { ev.preventDefault(); dropZone.classList.remove('dragover'); }));
+dropZone.addEventListener('drop', ev => {
+  const f = ev.dataTransfer.files[0];
+  if (f && f.name.endsWith('.csv')) {
+    const dt = new DataTransfer(); dt.items.add(f); fileInput.files = dt.files;
+    fileDisplay.textContent = '📄 ' + f.name; fileDisplay.style.display = 'block'; uploadBtn.disabled = false;
+  }
+});
+
+// Retrain simulation
+function startRetrain() {
+  document.getElementById('retrainBtn').disabled = true;
+  document.getElementById('retrain-section').style.display = 'block';
+  const fill = document.getElementById('trainFill');
+  const log = document.getElementById('trainLog');
+  const steps = [
+    [12,'ok','Loading dataset (1,240 records)…'],
+    [28,'ok','Encoding categorical features…'],
+    [42,'ok','Train/test split: 80/20…'],
+    [56,'warn','12 rows with missing CGPA imputed with mean…'],
+    [70,'ok','Fitting Random Forest (n_estimators=100)…'],
+    [84,'ok','Cross-validation accuracy: 86.9%…'],
+    [96,'ok','Test accuracy: 87.3% | F1: 0.864'],
+    [100,'ok','✅ Model saved & deployed!']
+  ];
+  let i = 0;
+  function next() {
+    if (i >= steps.length) { document.getElementById('retrainBtn').disabled = false; return; }
+    const [p, cls, msg] = steps[i++];
+    fill.style.width = p + '%';
+    const line = document.createElement('div');
+    line.className = 'log-line ' + cls;
+    line.textContent = `[00:0${i}] ${msg}`;
+    log.appendChild(line); log.scrollTop = log.scrollHeight;
+    setTimeout(next, 850 + Math.random()*350);
+  }
+  setTimeout(next, 300);
+}
+</script>
+{% endblock %}

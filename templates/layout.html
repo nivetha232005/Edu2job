@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block body %}
+
+<!-- Navbar -->
+<nav class="navbar">
+  <a href="{{ url_for('dashboard') }}" class="navbar-brand">
+    <div class="brand-icon">🎯</div>
+    EDU2JOB
+  </a>
+  <ul class="navbar-nav">
+    <li><a href="{{ url_for('dashboard') }}" class="{{ 'active' if request.endpoint == 'dashboard' }}">Dashboard</a></li>
+    <li><a href="{{ url_for('profile') }}" class="{{ 'active' if request.endpoint == 'profile' }}">Profile</a></li>
+    <li><a href="{{ url_for('history') }}" class="{{ 'active' if request.endpoint == 'history' }}">History</a></li>
+    {% if session.get('role') == 'admin' %}
+    <li><a href="{{ url_for('admin_dashboard') }}" class="{{ 'active' if request.endpoint == 'admin_dashboard' }}">Admin</a></li>
+    {% endif %}
+    <li class="dropdown">
+      <div class="avatar-circle" title="{{ session.get('user_name','') }}">
+        {{ session.get('user_name', 'U')[0].upper() }}
+      </div>
+      <div class="dropdown-menu">
+        <div style="padding:.6rem 1rem .4rem;">
+          <div style="font-weight:700;font-size:.88rem;color:#1E293B;">{{ session.get('user_name','') }}</div>
+          <div style="font-size:.78rem;color:#94A3B8;">{{ session.get('email','') }}</div>
+        </div>
+        <div class="dropdown-divider"></div>
+        <a href="{{ url_for('profile') }}" class="dropdown-item">⚙️ &nbsp;Settings</a>
+        <a href="{{ url_for('history') }}" class="dropdown-item">📋 &nbsp;Prediction History</a>
+        <div class="dropdown-divider"></div>
+        <a href="{{ url_for('logout') }}" class="dropdown-item" style="color:#EF4444;">🚪 &nbsp;Logout</a>
+      </div>
+    </li>
+  </ul>
+</nav>
+
+<!-- Layout -->
+<div class="app-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Main</div>
+      <a href="{{ url_for('dashboard') }}" class="sidebar-link {{ 'active' if request.endpoint == 'dashboard' }}">
+        <span class="icon">🏠</span> Dashboard
+      </a>
+      <a href="{{ url_for('profile') }}" class="sidebar-link {{ 'active' if request.endpoint == 'profile' }}">
+        <span class="icon">👤</span> My Profile
+      </a>
+      <a href="{{ url_for('history') }}" class="sidebar-link {{ 'active' if request.endpoint == 'history' }}">
+        <span class="icon">📋</span> History
+      </a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Career Tools</div>
+      <a href="{{ url_for('predict') }}" class="sidebar-link {{ 'active' if request.endpoint == 'predict' }}">
+        <span class="icon">🔮</span> Predict Job Role
+      </a>
+      <a href="{{ url_for('visualizations') }}" class="sidebar-link {{ 'active' if request.endpoint == 'visualizations' }}">
+        <span class="icon">📊</span> Career Insights
+      </a>
+      <a href="{{ url_for('feedback') }}" class="sidebar-link {{ 'active' if request.endpoint == 'feedback' }}">
+        <span class="icon">💬</span> Rate Predictions
+      </a>
+    </div>
+    {% if session.get('role') == 'admin' %}
+    <div class="sidebar-section">
+      <div class="sidebar-label">Admin</div>
+      <a href="{{ url_for('admin_dashboard') }}" class="sidebar-link {{ 'active' if request.endpoint == 'admin_dashboard' }}">
+        <span class="icon">🛡️</span> Admin Panel
+      </a>
+    </div>
+    {% endif %}
+    <div class="sidebar-section" style="margin-top:auto;">
+      <a href="{{ url_for('logout') }}" class="sidebar-link" style="color:#EF4444;">
+        <span class="icon">🚪</span> Logout
+      </a>
+    </div>
+  </aside>
+
+  <!-- Page Content -->
+  <main class="main-content">
+    {% block content %}{% endblock %}
+  </main>
+</div>
+{% endblock %}
