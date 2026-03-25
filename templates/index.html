@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}EDU2JOB – Predict Your Career Path{% endblock %}
+{% block body %}
+
+<!-- Navbar (public) -->
+<nav class="navbar">
+  <a href="{{ url_for('index') }}" class="navbar-brand">
+    <div class="brand-icon">🎯</div>
+    JobRole AI
+  </a>
+  <ul class="navbar-nav">
+    <li><a href="{{ url_for('login') }}" class="btn btn-outline btn-sm">Login</a></li>
+    <li><a href="{{ url_for('register') }}" class="btn btn-primary btn-sm">Get Started</a></li>
+  </ul>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <h1>🚀 Predict Your Ideal<br>Career Path with AI</h1>
+  <p>Enter your education details and let our machine learning model match you with the most suitable job roles — backed by real data and confidence scores.</p>
+  <div class="hero-buttons">
+    <a href="{{ url_for('register') }}" class="btn btn-lg" style="background:white;color:var(--primary);font-weight:700;">
+      ✨ Start for Free
+    </a>
+    <a href="{{ url_for('login') }}" class="btn btn-lg btn-outline" style="border-color:rgba(255,255,255,.5);color:white;">
+      Login →
+    </a>
+  </div>
+</section>
+
+<!-- Feature cards -->
+<section style="background:var(--surface);">
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#EEF2FF;color:#4F46E5;">🔮</div>
+      <h3>AI-Powered Predictions</h3>
+      <p style="color:var(--text-muted);font-size:.9rem;">ML model maps your degree, specialization, CGPA, and skills to the best-fit roles with confidence scores.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#F0FDF4;color:#10B981;">📊</div>
+      <h3>Career Visualizations</h3>
+      <p style="color:var(--text-muted);font-size:.9rem;">Interactive charts showing education-to-career trends and how your profile compares to peers.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#FFF7ED;color:#F59E0B;">🛡️</div>
+      <h3>Secure & Private</h3>
+      <p style="color:var(--text-muted);font-size:.9rem;">JWT-secured login, Google OAuth, and role-based access. Your data stays yours.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#EFF6FF;color:#3B82F6;">📝</div>
+      <h3>Prediction History</h3>
+      <p style="color:var(--text-muted);font-size:.9rem;">Every prediction is saved. Track how your profile evolves and revisit past results anytime.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section style="text-align:center;padding:4rem 2rem;background:white;border-top:1px solid var(--border);">
+  <h2>Ready to find your career match?</h2>
+  <p style="color:var(--text-muted);margin:.5rem auto 1.5rem;max-width:480px;">Join thousands of students and professionals who already discovered their ideal job path.</p>
+  <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg">Create Free Account →</a>
+</section>
+
+<footer style="text-align:center;padding:1.5rem;background:var(--surface);border-top:1px solid var(--border);font-size:.82rem;color:var(--text-muted);">
+  © 2025 JobRole AI &nbsp;•&nbsp; Milestone 1 – User Authentication & Profile Management
+</footer>
+{% endblock %}
