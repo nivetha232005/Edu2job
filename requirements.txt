@@ -6,3 +6,4 @@ python-dotenv
 requests
 oauthlib
 requests-oauthlib
+numpy
