@@ -582,4 +582,4 @@ def seed_demo():
 if __name__ == '__main__':
     with app.app_context():
         print("Google authorized endpoint:", url_for("google.authorized",_external=True))
-    app.run(debug=True, port=5050)
+    app.run(host='0.0.0.0', port=port, debug=False)
