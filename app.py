@@ -10,8 +10,8 @@ load_dotenv()
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 app = Flask(__name__)
-app.secret_key = os.getenv("FLASK_SECRET_KEY") or secrets.token_hex(32)
-JWT_SECRET = os.getenv("JWT_SECRET_KEY") or secrets.token_hex(32)
+app.secret_key = os.getenv("super-secret-key-12345") or secrets.token_hex(32)
+JWT_SECRET = os.getenv("my-jwt-secret-98765") or secrets.token_hex(32)
 app.config["SERVER_NAME"] = "127.0.0.1:5050"
 app.config["PREFERRED_URL_SCHEME"] = "http"
 DATABASE = 'jobrole.db'
